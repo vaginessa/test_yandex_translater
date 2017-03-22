@@ -2,5 +2,13 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#3F51B5</color>
+
+    <color name="black">#000</color>
+    <color name="white">#fff</color>
+
+    <color name="border_translate">@color/colorAccent</color>
+
+    <color name="ic_copy">@color/colorAccent</color>
+    <color name="ic_clear">@color/colorAccent</color>
 </resources>

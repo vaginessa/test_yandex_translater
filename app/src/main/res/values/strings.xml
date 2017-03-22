@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">test_yandex_translater</string>
+    <string name="title_activity_two">TwoActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="hint_editText_translate">Введите текст для перевода</string>
 </resources>
