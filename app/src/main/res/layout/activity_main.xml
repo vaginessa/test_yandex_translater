@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/swap_language"
-                android:text="Английский" />
+                android:text="@string/nu11" />
 
             <ImageButton
                 android:id="@+id/swap_language"
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/swap_language"
-                android:text="Русский" />
+                android:text="@string/nu11" />
         </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -57,8 +57,9 @@
             android:background="@drawable/background_et_translate"
             android:gravity="top"
             android:hint="@string/hint_editText_translate"
-            android:inputType="textMultiLine"
-            android:lines="5"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:textSize="16sp"
             android:scrollbars="vertical" />
 
         <RelativeLayout
@@ -88,9 +89,16 @@
 
         <TextView
             android:id="@+id/text_out"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/buttons_group"/>
+            android:layout_below="@id/buttons_group"
+            android:background="@color/colorPrimary"
+            android:padding="8dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:hint="Тут будет перевод"
+            android:textColorHint="@color/white"
+            android:clickable="true"/>
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

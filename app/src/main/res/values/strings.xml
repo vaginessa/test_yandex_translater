@@ -6,4 +6,6 @@
     <string name="title_notifications">Notifications</string>
 
     <string name="hint_editText_translate">Введите текст для перевода</string>
+
+    <string name="nu11">null</string>
 </resources>
