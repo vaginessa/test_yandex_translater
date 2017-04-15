@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         initArrays();
 
-        getListLanguagesTranslate();
+        getListLanguagesTranslateFromServer();
 
         initEtTextIn();
     }
@@ -121,12 +121,12 @@ public class MainActivity extends AppCompatActivity {
             mLanguages.add(new Language(map.valueAt(i), map.keyAt(i)));
         }
 
-        setLangIn(0);
+        setLangIn(15);
         setLangOut(1);
     }
 
-    // Получаем массивы языков с сервера
-    public void getListLanguagesTranslate() {
+    // Получить список языков с сервера
+    public void getListLanguagesTranslateFromServer() {
         RetrofitHelper.getInstance(RetrofitHelper.TRANSLATE_URL)
                 .getYandexAPI()
                 .getLangs()
@@ -139,9 +139,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<LangsRespons> call, Throwable t) {
                         Snackbar.make(
-                            findViewById(R.id.main_content),
-                            R.string.no_internet,
-                            Snackbar.LENGTH_SHORT)
+                                findViewById(R.id.main_content),
+                                R.string.no_internet,
+                                Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 });
@@ -177,16 +177,22 @@ public class MainActivity extends AppCompatActivity {
                 .enqueue(new Callback<TranslateResponse>() {
                     @Override
                     public void onResponse(Call<TranslateResponse> call, Response<TranslateResponse> response) {
-                        TranslateResponse translateResponse = response.body();
-                        mTvTextOut.setText(translateResponse.getText()[0]);
+                        try {
+                            TranslateResponse translateResponse = response.body();
+                            mTvTextOut.setText(translateResponse.getText()[0]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            mTvTextOut.setText("");
+                        }
+
                     }
 
                     @Override
                     public void onFailure(Call<TranslateResponse> call, Throwable t) {
                         Snackbar.make(
-                            findViewById(R.id.main_content),
-                            R.string.no_internet,
-                            Snackbar.LENGTH_SHORT)
+                                findViewById(R.id.main_content),
+                                R.string.no_internet,
+                                Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 });
@@ -268,34 +274,40 @@ public class MainActivity extends AppCompatActivity {
     /***********************************************************************************************
      * Обработчики событий
      **********************************************************************************************/
+    // Нажатие на кнопку языка ввода
     @OnClick(R.id.language_in)
     public void clickLanguageIn() {
         choiceLang(LANG_IN);
     }
 
+    // нажатие на кнопку языка вывода
     @OnClick(R.id.language_out)
     public void clickLanguageOut() {
         choiceLang(LANG_OUT);
     }
 
+    // Нажатие на кнопку смены перевода
     @OnClick(R.id.swap_language)
     public void clickSwap() {
         swapLang();
         copyPasteTextOutToTextIn();
     }
 
+    // Нажатие на кнопку КОПИРОВАТЬ
     @OnClick(R.id.btn_copy)
     public void clickCopy() {
         copyText(mEtTextIn.getText().toString());
         showMessageSnackbar("Текст скопирован");
     }
 
+    // Нажатие на кнопку ВСТАВИТЬ
     @OnClick(R.id.btn_paste)
     public void clickPaste() {
         mEtTextIn.setText(mEtTextIn.getText().toString() + pasteText());
         mEtTextIn.setSelection(mEtTextIn.getText().length());
     }
 
+    // Нажатие на кнопку ОЧИСТИТЬ
     @OnClick(R.id.btn_clear)
     public void clickClear() {
         mEtTextIn.setText("");
