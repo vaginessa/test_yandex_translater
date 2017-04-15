@@ -18,6 +18,7 @@ public interface YandexAPI {
 
     String API_KEY_TRANSLATE = "trnsl.1.1.20170321T114903Z.6cd423dc73bfc3ba.713804e81c39c1343ca0d0e3da0c602f962d6eee";
     String API_KEY_PREDICTOR = "pdct.1.1.20170323T071659Z.689167d7703d9001.cef0a38ca649e602036ff72c9e7d519ef6c9ce2a";
+    String API_KEY_DICTIONARY = "dict.1.1.20170409T135647Z.5e9c4ca726199eaf.8d4d46bad5e6e65a27bfc51c8700d23a8baebdae";
 
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     @POST("api/v1.5/tr.json/getLangs?key=" + API_KEY_TRANSLATE + "&ui=ru")

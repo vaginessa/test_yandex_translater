@@ -12,20 +12,22 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitHelper {
 
-    public static final String BASE_URL = "https://translate.yandex.net/";
+    public static final String TRANSLATE_URL = "https://translate.yandex.net/";
+    public static final String DICTIONARY_URL = "https://translate.yandex.net/";
+    public static final String PREDICTOR_URL = "https://translate.yandex.net/";
 
     private static RetrofitHelper instance;
 
     private YandexAPI yandexAPI;
 
-    private RetrofitHelper() {
+    private RetrofitHelper(String url) {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(url)
                 .client(client)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -34,9 +36,9 @@ public class RetrofitHelper {
         this.yandexAPI = retrofit.create(YandexAPI.class);
     }
 
-    public static RetrofitHelper getInstance() {
+    public static RetrofitHelper getInstance(String url) {
         if (instance == null) {
-            instance = new RetrofitHelper();
+            instance = new RetrofitHelper(url);
         }
 
         return instance;

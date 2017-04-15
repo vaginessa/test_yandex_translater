@@ -22,7 +22,7 @@
                 android:id="@+id/language_in"
                 style="@style/AppbarButtons"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_toLeftOf="@+id/swap_language"
                 android:text="@string/nu11" />
 
@@ -30,7 +30,7 @@
                 android:id="@+id/swap_language"
                 style="@style/AppbarButtons"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_swap" />
 
@@ -38,7 +38,7 @@
                 android:id="@+id/language_out"
                 style="@style/AppbarButtons"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_toRightOf="@+id/swap_language"
                 android:text="@string/nu11" />
         </RelativeLayout>

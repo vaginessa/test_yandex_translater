@@ -9,9 +9,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -51,27 +52,10 @@ public class MainActivity extends AppCompatActivity {
     public static final int LANG_IN = 0;
     public static final int LANG_OUT = 1;
 
-    // Коллекции для массивов с языками
-    public ArrayMap<String, String> langKeyArrayMap;
-    public ArrayMap<String, String> keyLangArrayMap;
-    public ArrayList<String> langsArrayList;
-
-    // Список языков предиктора
-    public ArrayList<String> listLangsPredictor;
-
-    // Текущие коды языков
-    public int currentItemLangIn;
-    public int currentItemLangOut;
-
-    // Текущие наименования языков
-    public String currentNameLangIn;
-    public String currentNameLangOut;
-
-    // Текущий код направления перевода
-    public String currentLangs;
-
-    // Переменная активности предиктора
-    public boolean activatePredictor;
+    // Поля для работы с языками
+    private ArrayList<Language> mLanguages;
+    private Language mLangIn;
+    private Language mLangOut;
 
     // Поля для работы с буферо обмена
     ClipboardManager mClipboard;
@@ -101,67 +85,95 @@ public class MainActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     // Переводим текст
-                    translate(mEtTextIn.getText().toString(), currentLangs);
+                    translate(mEtTextIn.getText().toString());
                 }
                 return false;
+            }
+        });
+        mEtTextIn.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                translate(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
 
     // Инициализируем массивы
     public void initArrays() {
-        langKeyArrayMap = new ArrayMap<>();
-        langsArrayList = new ArrayList<>();
-        listLangsPredictor = new ArrayList<>();
+        mLanguages = new ArrayList<>();
     }
 
-    // Получаем массивы языков
+    // Сортировка языков
+
+    // Заполняем массив
+    private void fillListLangs(ArrayMap<String, String> map) {
+        for (int i = 0; i < map.size(); i++) {
+            mLanguages.add(new Language(map.valueAt(i), map.keyAt(i)));
+        }
+
+        setLangIn(0);
+        setLangOut(1);
+    }
+
+    // Получаем массивы языков с сервера
     public void getListLanguagesTranslate() {
-        RetrofitHelper.getInstance()
+        RetrofitHelper.getInstance(RetrofitHelper.TRANSLATE_URL)
                 .getYandexAPI()
                 .getLangs()
                 .enqueue(new Callback<LangsRespons>() {
                     @Override
                     public void onResponse(Call<LangsRespons> call, Response<LangsRespons> response) {
-
-                        LangsRespons langsRespons = response.body();
-                        keyLangArrayMap = langsRespons.getLangs();
-
-                        for (int i = 0; i < keyLangArrayMap.size(); i++) {
-                            langKeyArrayMap.put(keyLangArrayMap.valueAt(i), keyLangArrayMap.keyAt(i));
-                            langsArrayList.add(keyLangArrayMap.valueAt(i));
-                        }
-
-                        currentItemLangIn = 15;
-                        currentItemLangOut = 62;
-                        currentNameLangIn = langsArrayList.get(currentItemLangIn);
-                        currentNameLangOut = langsArrayList.get(currentItemLangOut);
-
-                        setKeysLangs();
-
-                        mBtnLanguageIn.setText(currentNameLangIn);
-                        mBtnLanguageOut.setText(currentNameLangOut);
+                        fillListLangs(response.body().getLangs());
                     }
 
                     @Override
                     public void onFailure(Call<LangsRespons> call, Throwable t) {
                         Snackbar.make(
                             findViewById(R.id.main_content),
-                            "Отсутствует интернет соединение",
+                            R.string.no_internet,
                             Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 });
     }
 
-    public void getListLanguagesPredictor() {
+    // Установить язык ввода
+    private void setLangIn(Language lang) {
+        mLangIn = lang;
+        mBtnLanguageIn.setText(mLangIn.getName());
+    }
+
+    // Установить язык ввода по индексу в массиве
+    private void setLangIn(int index) {
+        setLangIn(mLanguages.get(index));
+    }
+
+    // Установить язык вывода
+    private void setLangOut(Language lang) {
+        mLangOut = lang;
+        mBtnLanguageOut.setText(mLangOut.getName());
+    }
+
+    // Установить язык вывода по индексу в массиве
+    private void setLangOut(int index) {
+        setLangOut(mLanguages.get(index));
     }
 
     // Переводим текст
-    public void translate(String text, String lang) {
-        RetrofitHelper.getInstance()
+    public void translate(String text) {
+        RetrofitHelper.getInstance(RetrofitHelper.TRANSLATE_URL)
                 .getYandexAPI()
-                .translate(text, lang, "plain")
+                .translate(text, getLang(), "plain")
                 .enqueue(new Callback<TranslateResponse>() {
                     @Override
                     public void onResponse(Call<TranslateResponse> call, Response<TranslateResponse> response) {
@@ -173,27 +185,23 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(Call<TranslateResponse> call, Throwable t) {
                         Snackbar.make(
                             findViewById(R.id.main_content),
-                            "Отсутствует интернет соединение",
+                            R.string.no_internet,
                             Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 });
     }
 
+    // Получить направление перевода
+    private String getLang() {
+        return mLangIn.getKey() + "-" + mLangOut.getKey();
+    }
+
     // Смена направления перевода
-    public void swapLangs() {
-        int a = currentItemLangIn;
-        currentItemLangIn = currentItemLangOut;
-        currentItemLangOut = a;
-
-        String b = currentNameLangIn;
-        currentNameLangIn = currentNameLangOut;
-        currentNameLangOut = b;
-
-        mBtnLanguageIn.setText(currentNameLangIn);
-        mBtnLanguageOut.setText(currentNameLangOut);
-
-        setKeysLangs();
+    public void swapLang() {
+        Language langIn = mLangIn;
+        setLangIn(mLangOut);
+        setLangOut(langIn);
     }
 
     // Заменяем данные текста переводом
@@ -209,15 +217,15 @@ public class MainActivity extends AppCompatActivity {
 
         switch (type_lang) {
             case LANG_IN:
-                title = "Язык текста";
+                title = getString(R.string.lang_text);
                 break;
             case LANG_OUT:
-                title = "Язык перевода";
+                title = getString(R.string.lang_translate);
                 break;
         }
         // Создаем адаптер данных
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.select_dialog_item, langsArrayList);
+        LangsAdapter adapter =
+                new LangsAdapter(this, android.R.layout.select_dialog_item, mLanguages);
         // Создаем новый диалог
         new AlertDialog.Builder(this)
                 .setTitle(title)
@@ -228,31 +236,17 @@ public class MainActivity extends AppCompatActivity {
                                 // Тут надо описать реализацию выбора языка
                                 switch (type_lang) {
                                     case LANG_IN:
-                                        currentItemLangIn = item;
-                                        currentNameLangIn = langsArrayList.get(item);
-                                        mBtnLanguageIn.setText(String.valueOf(currentNameLangIn));
-                                        activatePredictor();
+                                        setLangIn(mLanguages.get(item));
                                         break;
                                     case LANG_OUT:
-                                        currentItemLangOut = item;
-                                        currentNameLangOut = langsArrayList.get(item);
-                                        mBtnLanguageOut.setText(String.valueOf(currentNameLangOut));
+                                        setLangOut(mLanguages.get(item));
                                         break;
                                 }
-                                setKeysLangs();
                                 dialog.dismiss();
                             }
                         })
                 .create()
                 .show();
-    }
-
-    // Установка кода направления перевода
-    public void setKeysLangs(){
-        String in = langKeyArrayMap.get(currentNameLangIn);
-        String out = langKeyArrayMap.get(currentNameLangOut);
-
-        currentLangs = in + "-" + out;
     }
 
     // Копировать в буфер
@@ -267,18 +261,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Показать сообщение в снэкбаре
-    public void showMessageSnackbar(String message) {
+    private void showMessageSnackbar(String message) {
         Snackbar.make(findViewById(R.id.main_content), message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    // Активация предиктора
-    public void activatePredictor() {
-        if (!listLangsPredictor.isEmpty()) {
-            for (String lang : listLangsPredictor) {
-                if (langKeyArrayMap.get(currentNameLangIn).equals(lang))
-                    activatePredictor = true;
-            }
-        }
     }
 
     /***********************************************************************************************
@@ -296,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.swap_language)
     public void clickSwap() {
-        swapLangs();
+        swapLang();
         copyPasteTextOutToTextIn();
     }
 

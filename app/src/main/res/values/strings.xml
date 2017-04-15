@@ -8,4 +8,9 @@
     <string name="hint_editText_translate">Введите текст для перевода</string>
 
     <string name="nu11">null</string>
+
+    <string name="lang_text">Язык текста</string>
+    <string name="lang_translate">Язык перевода</string>
+
+    <string name="no_internet">Отсутствует интернет сединение</string>
 </resources>
