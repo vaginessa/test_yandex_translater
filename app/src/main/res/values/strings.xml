@@ -12,5 +12,11 @@
     <string name="lang_text">Язык текста</string>
     <string name="lang_translate">Язык перевода</string>
 
+    <!-- History and Favourite fragments -->
+    <string name="history">История</string>
+    <string name="favourite">Избранное</string>
+    <string name="history_empty">В истории нет ни одного перевода</string>
+    <string name="favourite_empty">Вы ничего не добавляли в избранное</string>
+
     <string name="no_internet">Отсутствует интернет сединение</string>
 </resources>

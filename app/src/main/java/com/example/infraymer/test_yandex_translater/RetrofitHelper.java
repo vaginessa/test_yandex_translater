@@ -13,8 +13,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class RetrofitHelper {
 
     public static final String TRANSLATE_URL = "https://translate.yandex.net/";
-    public static final String DICTIONARY_URL = "https://translate.yandex.net/";
-    public static final String PREDICTOR_URL = "https://translate.yandex.net/";
+    public static final String DICTIONARY_URL = "https://translator.yandex.net/";
+    public static final String PREDICTOR_URL = "https://translator.yandex.net/";
 
     private static RetrofitHelper instance;
 

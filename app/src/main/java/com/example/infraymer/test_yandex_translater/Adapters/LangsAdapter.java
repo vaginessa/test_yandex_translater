@@ -1,4 +1,4 @@
-package com.example.infraymer.test_yandex_translater;
+package com.example.infraymer.test_yandex_translater.Adapters;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.example.infraymer.test_yandex_translater.Language;
 
 import java.util.ArrayList;
 
